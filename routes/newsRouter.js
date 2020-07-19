@@ -4,10 +4,9 @@ const debug = require('debug')('app:newsRouter');
 const newsModel = require('../models/newsModel');
 const isLoggedIn = require('../middleware/isAuthenticated');
 
-// router.all('/*', isLoggedIn, (req, res, next) => {
-// 	next();
-
-// });
+router.all('/*', isLoggedIn, (req, res, next) => {
+	next();
+});
 
 //GET all News
 router.get('/', (req, res) => {

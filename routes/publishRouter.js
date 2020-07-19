@@ -1,47 +1,27 @@
 const express = require('express');
 const router = express.Router();
+const debug = require('debug')('app:publishRouter');
 const bannerModel = require('../models/bannerModel');
 const mediaModel = require('../models/mediaModel');
 const logoModel = require('../models/logoModel');
 const newsModel = require('../models/newsModel');
 const isLoggedIn = require('../middleware/isAuthenticated');
 
-router.get('/', (req, res) => {
-	let news, banners, media, logos;
+router.all('/*', isLoggedIn, (req, res) => {
+	next();
+});
 
-	bannerModel
-		.find({ active: true })
-		.then((doc) => {
-			banners = doc;
-		})
-		.catch((err) => debug(`error : ${chalk.red(err)}`));
+router.get('/', isLoggedIn, async (req, res) => {
+	let banners = await bannerModel.find({ active: true });
+	let media = await mediaModel.find({ active: true });
+	let news = await newsModel.find({ active: true });
+	let logos = await logoModel.find({ active: true });
 
-	mediaModel
-		.find({ active: true })
-		.then((doc) => {
-			media = doc;
-		})
-		.catch((err) => debug(`error : ${chalk.red(err)}`));
-
-	newsModel
-		.find({ active: true })
-		.then((doc) => {
-			news = doc;
-		})
-		.catch((err) => debug(`error : ${chalk.red(err)}`));
-
-	logoModel
-		.find({ active: true })
-		.then((doc) => {
-			logos = doc;
-		})
-		.catch((err) => debug(`error : ${chalk.red(err)}`));
-
-	res.status(200).json({
-		media: media,
-		news: news,
-		logos: logos,
-		banners: banners,
+	res.json({
+		banners,
+		media,
+		news,
+		logos,
 	});
 });
 

@@ -7,9 +7,9 @@ const isEmpty = require('is-empty');
 const fs = require('fs');
 const isLoggedIn = require('../middleware/isAuthenticated');
 
-// router.all('/*', isLoggedIn, (req, res, next) => {
-// 	next();
-// });
+router.all('/*', isLoggedIn, (req, res, next) => {
+	next();
+});
 
 router.get('/', (req, res) => {
 	mediaModel
