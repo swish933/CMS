@@ -1,6 +1,5 @@
 const express = require('express');
 const passport = require('passport');
-const gravatar = require('gravatar');
 
 const router = express.Router();
 const isLoggedIn = require('../middleware/isAuthenticated');

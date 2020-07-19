@@ -11,8 +11,10 @@ const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload');
 
-const { dbUrl, PORT, secret } = require('./config/config');
-
+require('dotenv').config();
+const PORT = process.env.PORT;
+const DB_URL = process.env.DB_URL;
+const SECRET = process.env.SECRET;
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -32,12 +34,12 @@ require('./config/passport')(passport);
 // required for passport // secret for session
 app.use(
 	session({
-		secret: secret,
+		secret: 'secretKey',
 		saveUninitialized: true,
 		resave: true,
 		//store session on MongoDB using express-session + connect-mongo
 		store: new MongoStore({
-			url: dbUrl,
+			url: DB_URL,
 			collection: 'sessions',
 		}),
 	})
@@ -54,7 +56,7 @@ app.use(flash());
 
 // Connect to MongoDB
 mongoose
-	.connect(dbUrl, {
+	.connect(DB_URL, {
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
