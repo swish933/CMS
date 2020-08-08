@@ -32,7 +32,7 @@ module.exports = function (passport) {
 					// format to lower-case
 					email = email.toLowerCase(); // process asynchronous
 				process.nextTick(function () {
-					User.findOne({ 'local.email': email }, function (err, user) {
+					User.findOne({ email: email }, function (err, user) {
 						// if errors
 						if (err) return done(err); // check errors and bring the messages
 						if (!user)
@@ -71,7 +71,7 @@ module.exports = function (passport) {
 				process.nextTick(function () {
 					// if the user is not already logged in:
 					if (!req.user) {
-						User.findOne({ 'local.email': email }, function (err, user) {
+						User.findOne({ email: email }, function (err, user) {
 							// if errors
 							if (err) return done(err);
 							// check email
@@ -88,9 +88,10 @@ module.exports = function (passport) {
 								// create the user
 								const newUser = new User();
 								// Get user name from req.body
-								newUser.local.name = req.body.name;
-								newUser.local.email = email;
-								newUser.local.password = newUser.generateHash(password);
+								newUser.firstName = req.body.firstName;
+								newUser.lastName = req.body.lastName;
+								newUser.email = email;
+								newUser.password = newUser.generateHash(password);
 								// save data
 								newUser.save(function (err) {
 									if (err) throw err;

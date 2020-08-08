@@ -1,0 +1,32 @@
+<h2>All News</h2>
+
+<div class="container mt-3 w-75">
+    <table class='table'>
+        <thead class="thead-dark">
+            <tr>
+                <th>Content</th>
+                <th>Category</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% news.forEach(doc => { %>
+            <tr>
+                <td><%=doc.content%></td>
+                <td><%=doc.category%></td>
+                <td><%=doc.active%></td>
+                <td class="d-flex">
+                    <button class="btn btn-sm btn-warning mr-2"><a href="/news/<%=doc.id%> ">Edit</a></button>
+                    <form action='/news/<%=doc.id%>?_method=DELETE' method="POST">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+
+                </td>
+            </tr>
+            <% }) %>
+
+        </tbody>
+    </table>
+</div>

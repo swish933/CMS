@@ -10,6 +10,8 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload');
+const { globalVariables } = require('./config/configuration');
+const expressLayouts = require('express-ejs-layouts');
 
 require('dotenv').config();
 const PORT = process.env.PORT;
@@ -18,6 +20,8 @@ const SECRET = process.env.SECRET;
 const app = express();
 
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'layouts/dashboard');
 
 app.use(methodOverride('_method'));
 app.use(morgan('tiny'));
@@ -53,6 +57,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 // flash messages
 app.use(flash());
+app.use(globalVariables);
 
 // Connect to MongoDB
 mongoose

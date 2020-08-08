@@ -1,0 +1,19 @@
+<h2>Create News</h2>
+
+<div class="container border mt-4 w-75 p-2">
+    <form action="/news/createNews" method="POST">
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input class="form-control" type="text" name="category" id="category" />
+        </div>
+        <div class="form-group form-check">
+            <input name="active" type="checkbox" class="form-check-input" id="checkboxActive" />
+            <label class="form-check-label" for="checkboxActive">Active</label>
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea name="content" class="form-control" id="content" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-success">Create News</button>
+    </form>
+</div>

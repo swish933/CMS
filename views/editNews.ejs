@@ -1,0 +1,20 @@
+<h2>Edit Post</h2>
+
+<div class="container mt-2 w-75">
+    <form action="/news/<%-news.id%>?_method=PUT" method="POST">
+        <div class="form-group">
+            <label for="category">Category</label>
+            <input class="form-control" type="text" name="category" id="category" value=<%=news.category%> />
+        </div>
+        <div class="form-group form-check">
+            <input name="active" type="checkbox" class="form-check-input" id="checkboxActive"
+                <% if (news.active===true){%> checked <% } %> />
+            <label class="form-check-label" for="checkboxActive">Active</label>
+        </div>
+        <div class="form-group">
+            <label for="content">Content</label>
+            <textarea name="content" class="form-control" id="content" rows="5"><%= news.content%></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-success">Update</button>
+    </form>
+</div>

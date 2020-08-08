@@ -1,64 +1,23 @@
 const express = require('express');
-const passport = require('passport');
-
 const router = express.Router();
 const isLoggedIn = require('../middleware/isAuthenticated');
+const authController = require('../controllers/authController');
 
-/* GET login page. */
-router.get('/', function (req, res, next) {
-	res.render('login', {
-		title: 'Login Page',
-		message: req.flash('loginMessage'),
-	});
-});
-
-/* POST login */
-router.post(
-	'/login',
-	passport.authenticate('local-login', {
-		//Success go to Profile Page / Fail go to login page
-		successRedirect: '/update',
-		failureRedirect: '/login',
-		failureFlash: true,
-	})
-);
+router
+	.route('/login')
+	.get(authController.getLogin)
+	.post(authController.postLogin);
 
 /* GET Signup */
-router.get('/signup', function (req, res) {
-	res.render('signup', {
-		title: 'Signup Page',
-		message: req.flash('signupMessage'),
-	});
-});
-
-/* POST Signup */
-router.post(
-	'/signup',
-	passport.authenticate('local-signup', {
-		//Success go to Profile Page / Fail go to Signup page
-		successRedirect: '/update',
-		failureRedirect: '/signup',
-		failureFlash: true,
-	})
-);
+router
+	.route('/signup')
+	.get(authController.getSignup)
+	.post(authController.postSignup);
 
 /* GET Update page. */
-router.get('/update', isLoggedIn, function (req, res, next) {
-	res.render('update', {
-		title: 'Update Page',
-		user: req.user,
-		avatar: gravatar.url(
-			req.user.email,
-			{ s: '100', r: 'x', d: 'retro' },
-			true
-		),
-	});
-});
+router.route('/dashboard').get(authController.getAdminDashboard);
 
 /* GET Logout Page */
-router.get('/logout', function (req, res) {
-	req.logout();
-	res.redirect('/');
-});
+router.route('/logout').get(isLoggedIn, authController.logout);
 
 module.exports = router;

@@ -5,7 +5,7 @@ const debug = require('debug')('app:bannerRouter');
 const chalk = require('chalk');
 const isEmpty = require('is-empty');
 const fs = require('fs');
-const isLoggedIn = require('../middleware/isAuthenticated');
+// const isLoggedIn = require('../middleware/isAuthenticated');
 
 // router.all('/*', isLoggedIn, (req, res, next) => {
 // 	next();
@@ -19,13 +19,13 @@ router.get('/', (req, res) => {
 		.catch((err) => debug(`error : ${chalk.red(err)}`));
 });
 
-router.get('/active', (req, res) => {
-	BannerModel.find({ active: true })
-		.then((banners) => {
-			res.status(200).json({ activeBanners: banners });
-		})
-		.catch((err) => debug(`error : ${chalk.red(err)}`));
-});
+// router.get('/active', (req, res) => {
+// 	BannerModel.find({ active: true })
+// 		.then((banners) => {
+// 			res.status(200).json({ activeBanners: banners });
+// 		})
+// 		.catch((err) => debug(`error : ${chalk.red(err)}`));
+// });
 
 router.get('/:id', (req, res) => {
 	const { id } = req.params;
