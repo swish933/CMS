@@ -13,6 +13,8 @@ router
 	.get(logoController.getAllLogos)
 	.post(logoController.uploadLogo);
 
+router.route('/uploadLogo').get(logoController.getUploadLogoPage);
+
 router
 	.route('/:id')
 	.get(logoController.getLogoById)
