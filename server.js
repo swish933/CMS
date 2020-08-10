@@ -33,11 +33,12 @@ app.use(
 	})
 );
 
+// required for passport
 require('./config/passport')(passport);
 
-// required for passport // secret for session
 app.use(
 	session({
+		// secret for session
 		secret: 'secretKey',
 		saveUninitialized: true,
 		resave: true,

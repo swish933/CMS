@@ -1,25 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const {
-	getAllNews,
-	createNews,
-	getNewsById,
-	updateNewsById,
-	deleteNewsById,
-	getCreateNewsPage,
-} = require('../controllers/newsController');
+const newsController = require('../controllers/newsController');
 const isLoggedIn = require('../middleware/isAuthenticated');
 
 router.all('/*', isLoggedIn, (req, res, next) => {
 	next();
 });
 
-router.route('/').get(getAllNews);
-router.route('/createNews').get(getCreateNewsPage).post(createNews);
+router.route('/').get(newsController.getAllNews);
+router
+	.route('/createNews')
+	.get(newsController.getCreateNewsPage)
+	.post(newsController.createNews);
 router
 	.route('/:id')
-	.get(getNewsById)
-	.put(updateNewsById)
-	.delete(deleteNewsById);
+	.get(newsController.getNewsById)
+	.put(newsController.updateNews)
+	.delete(newsController.deleteNews);
 
 module.exports = router;
