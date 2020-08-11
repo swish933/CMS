@@ -6,7 +6,7 @@ const logoSchema = mongoose.Schema({
 		required: true,
 		trim: true,
 	},
-	logo: {
+	logoPath: {
 		type: String,
 		trim: true,
 		required: true,

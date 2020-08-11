@@ -12,14 +12,14 @@ module.exports = {
 	getAllLogos: (req, res) => {
 		LogoModel.find()
 			.then((logos) => {
-				res.status(200).json({ Logos: logos });
+				res.render('logo/logoView', { logos: logos, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 
 	uploadLogo: (req, res) => {
 		let filename = '';
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
@@ -32,13 +32,13 @@ module.exports = {
 			});
 
 			new LogoModel({
-				name: filename,
-				logo: `uploads/logos/${filename}`,
+				name: name,
+				logoPath: `/public/uploads/logos/${filename}`,
 				active: show,
 			})
 				.save()
 				.then((logo) => {
-					res.status(200).json({ Logo: logo, message: 'File Uploaded' });
+					res.redirect('/logo');
 				})
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
@@ -50,59 +50,56 @@ module.exports = {
 		const { id } = req.params;
 		LogoModel.findById(id)
 			.then((logo) => {
-				res.status(200).json({ Logo: logo });
+				res.render('logo/editLogo', { logo: logo, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 
 	updateLogo: (req, res) => {
 		const { id } = req.params;
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
 			LogoModel.findById(id)
 				.then((doc) => {
-					let path = `./public/${doc.logo}`;
+					let path = `.${doc.logoPath}`;
 					fs.stat(path, (err) => {
 						fs.unlink(path, (err) => {
 							if (err) {
 								debug(err);
 							}
-							console.log('File deleted');
+							debug(`${chalk.red(`File deleted`)}`);
 						});
 					});
 				})
-				.catch((err) => debug(`error : ${chalk.red(err)}`));
+				.then(() => {
+					let file = req.files.uploadedFile;
+					let filename = file.name;
+					let uploadDir = './public/uploads/logos/';
 
-			let file = req.files.uploadedFile;
-			let filename = file.name;
-			let uploadDir = './public/uploads/logos/';
+					file.mv(uploadDir + filename, (err) => {
+						if (err) throw err;
+					});
 
-			file.mv(uploadDir + filename, (err) => {
-				if (err) throw err;
-			});
+					const data = {
+						name: name,
+						logoPath: `/public/uploads/logos/${filename}`,
+						active: show,
+					};
 
-			const data = {
-				name: filename,
-				logo: `uploads/logos/${filename}`,
-				active: show,
-			};
-
-			LogoModel.updateOne({ _id: id }, data)
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Updated image and status' });
+					LogoModel.updateOne({ _id: id }, data)
+						.then(() => res.redirect('/logo'))
+						.catch((err) => debug(`error : ${chalk.red(err)}`));
 				})
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
-			LogoModel.updateOne({ _id: id }, { active: show })
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Only status updated' });
-				})
+			const data = {
+				active: show,
+				name: name,
+			};
+			LogoModel.updateOne({ _id: id }, data)
+				.then(() => res.redirect('/logo'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		}
 	},
@@ -111,7 +108,7 @@ module.exports = {
 		const { id } = req.params;
 		LogoModel.findById(id)
 			.then((doc) => {
-				let path = `./public/${doc.logo}`;
+				let path = `.${doc.logoPath}`;
 				fs.stat(path, (err) => {
 					fs.unlink(path, (err) => {
 						if (err) {
@@ -124,11 +121,7 @@ module.exports = {
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 
 		LogoModel.deleteOne({ _id: id })
-			.then((doc) => {
-				res
-					.status(200)
-					.json({ Deleted: doc, message: 'File deleted succesfully' });
-			})
-			.catch((err) => {});
+			.then(() => res.redirect('/logo'))
+			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 };
