@@ -33,7 +33,7 @@ module.exports = {
 
 			new LogoModel({
 				name: name,
-				logoPath: `/public/uploads/logos/${filename}`,
+				logoPath: `/uploads/logos/${filename}`,
 				active: show,
 			})
 				.save()
@@ -63,7 +63,7 @@ module.exports = {
 		if (!isEmpty(req.files)) {
 			LogoModel.findById(id)
 				.then((doc) => {
-					let path = `.${doc.logoPath}`;
+					let path = `./public${doc.logoPath}`;
 					fs.stat(path, (err) => {
 						fs.unlink(path, (err) => {
 							if (err) {
@@ -84,7 +84,7 @@ module.exports = {
 
 					const data = {
 						name: name,
-						logoPath: `/public/uploads/logos/${filename}`,
+						logoPath: `/uploads/logos/${filename}`,
 						active: show,
 					};
 
@@ -108,7 +108,7 @@ module.exports = {
 		const { id } = req.params;
 		LogoModel.findById(id)
 			.then((doc) => {
-				let path = `.${doc.logoPath}`;
+				let path = `./public${doc.logoPath}`;
 				fs.stat(path, (err) => {
 					fs.unlink(path, (err) => {
 						if (err) {
