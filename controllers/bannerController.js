@@ -59,7 +59,7 @@ module.exports = {
 		if (!isEmpty(req.files)) {
 			BannerModel.findById(id)
 				.then((doc) => {
-					let path = `./public${doc.banner}`;
+					let path = `./public${doc.bannerPath}`;
 					fs.stat(path, (err) => {
 						fs.unlink(path, (err) => {
 							if (err) {
@@ -103,7 +103,7 @@ module.exports = {
 		const { id } = req.params;
 		BannerModel.findById(id)
 			.then((doc) => {
-				let path = `./public${doc.banner}`;
+				let path = `./public${doc.bannerPath}`;
 				fs.stat(path, (err) => {
 					fs.unlink(path, (err) => {
 						if (err) {
@@ -116,7 +116,7 @@ module.exports = {
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 
 		BannerModel.deleteOne({ _id: id })
-			.then((doc) => res.redirect('/banner'))
+			.then(() => res.redirect('/banner'))
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 };

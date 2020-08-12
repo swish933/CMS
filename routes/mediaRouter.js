@@ -13,6 +13,8 @@ router
 	.get(mediaController.getAllMedia)
 	.post(mediaController.uploadMedia);
 
+router.route('/uploadMedia').get(mediaController.getUploadMediaPage);
+
 router
 	.route('/:id')
 	.get(mediaController.getMediaById)

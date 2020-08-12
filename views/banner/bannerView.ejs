@@ -1,0 +1,32 @@
+<h2>All Banners</h2>
+
+<div class="container mt-3 w-50">
+    <table class='table table-hover'>
+        <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Active</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% banners.forEach(banner => { %>
+            <tr>
+                <td><%=banner.name%></td>
+                <td><%=banner.active%></td>
+                <td class="d-flex">
+                    <button class="btn btn-sm btn-warning mr-2">
+                        <a href="/banner/<%=banner.id%>">Edit</a>
+                    </button>
+                    <form action='/banner/<%=banner.id%>?_method=DELETE' method="POST">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+
+                </td>
+            </tr>
+            <% }) %>
+
+        </tbody>
+    </table>
+</div>

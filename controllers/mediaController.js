@@ -87,11 +87,7 @@ module.exports = {
 					};
 
 					MediaModel.updateOne({ _id: id }, data)
-						.then((doc) => {
-							res
-								.status(200)
-								.json({ Updated: doc, message: 'Updated image and status' });
-						})
+						.then(() => res.redirect('/media'))
 						.catch((err) => debug(`error : ${chalk.red(err)}`));
 				})
 				.catch((err) => debug(`error : ${chalk.red(err)}`));

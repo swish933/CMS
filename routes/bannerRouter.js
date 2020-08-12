@@ -12,6 +12,7 @@ router
 	.get(bannerController.getAllBanners)
 	.post(bannerController.uploadBanner);
 
+router.route('/uploadBanner').get(bannerController.getUploadBannerPage);
 router
 	.route('/:id')
 	.get(bannerController.getBannerById)
