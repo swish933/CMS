@@ -4,7 +4,8 @@
 
     <img src="" alt=" <%- logo.name%>" class="img-fluid" id="my_img" />
 
-    <form action="/logo/<%=logo.id%>?_method=PUT" method="POST" enctype="multipart/form-data" class="mt-3">
+    <form action="/logo/<%=logo.id%>?_method=PUT" method="POST" enctype="multipart/form-data"
+        class="mt-3 border p-3 border-primary">
         <div class="form-group">
             <label for="file">Logo input</label>
             <input name="uploadedFile" type="file" class="form-control-file" id="file">
