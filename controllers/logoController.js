@@ -37,9 +37,7 @@ module.exports = {
 				active: show,
 			})
 				.save()
-				.then((logo) => {
-					res.redirect('/logo');
-				})
+				.then(() => res.redirect('/logo'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
 			res.send({ Error: 'err' });

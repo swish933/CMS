@@ -6,7 +6,7 @@ const mediaSchema = mongoose.Schema({
 		required: true,
 		trim: true,
 	},
-	media: {
+	mediaPath: {
 		type: String,
 		trim: true,
 		required: true,

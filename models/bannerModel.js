@@ -6,7 +6,7 @@ const bannerSchema = mongoose.Schema({
 		required: true,
 		trim: true,
 	},
-	banner: {
+	bannerPath: {
 		type: String,
 		trim: true,
 		required: true,

@@ -1,4 +1,4 @@
-const mediaModel = require('../models/mediaModel');
+const MediaModel = require('../models/mediaModel');
 const debug = require('debug')('app:mediaController');
 const chalk = require('chalk');
 const isEmpty = require('is-empty');
@@ -10,17 +10,16 @@ module.exports = {
 	},
 
 	getAllMedia: (req, res) => {
-		mediaModel
-			.find()
+		MediaModel.find()
 			.then((media) => {
-				res.status(200).json({ Media: media });
+				res.render('media/mediaView', { media: media, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 
 	uploadMedia: (req, res) => {
 		let filename = '';
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
@@ -32,15 +31,13 @@ module.exports = {
 				if (err) throw err;
 			});
 
-			new mediaModel({
-				name: filename,
-				media: `uploads/media/${filename}`,
+			new MediaModel({
+				name: name,
+				mediaPath: `/uploads/media/${filename}`,
 				active: show,
 			})
 				.save()
-				.then((media) => {
-					res.status(200).json({ Media: media, message: 'File Uploaded' });
-				})
+				.then(() => res.redirect('/media'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
 			res.send({ Error: 'err' });
@@ -49,24 +46,22 @@ module.exports = {
 
 	getMediaById: (req, res) => {
 		const { id } = req.params;
-		mediaModel
-			.findById(id)
+		MediaModel.findById(id)
 			.then((media) => {
-				res.status(200).json({ Media: media });
+				res.render('media/editMedia', { media: media, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 
 	updateMedia: (req, res) => {
 		const { id } = req.params;
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
-			mediaModel
-				.findById(id)
+			MediaModel.findById(id)
 				.then((doc) => {
-					let path = `./public/${doc.media}`;
+					let path = `./public${doc.mediaPath}`;
 					fs.stat(path, (err) => {
 						fs.unlink(path, (err) => {
 							if (err) {
@@ -76,48 +71,46 @@ module.exports = {
 						});
 					});
 				})
-				.catch((err) => debug(`error : ${chalk.red(err)}`));
+				.then(() => {
+					let file = req.files.uploadedFile;
+					let filename = file.name;
+					let uploadDir = './public/uploads/media/';
 
-			let file = req.files.uploadedFile;
-			let filename = file.name;
-			let uploadDir = './public/uploads/media/';
+					file.mv(uploadDir + filename, (err) => {
+						if (err) throw err;
+					});
 
-			file.mv(uploadDir + filename, (err) => {
-				if (err) throw err;
-			});
+					const data = {
+						name: name,
+						mediaPath: `/uploads/media/${filename}`,
+						active: show,
+					};
 
-			const data = {
-				name: filename,
-				media: `uploads/media/${filename}`,
-				active: show,
-			};
-
-			mediaModel
-				.updateOne({ _id: id }, data)
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Updated image and status' });
+					MediaModel.updateOne({ _id: id }, data)
+						.then((doc) => {
+							res
+								.status(200)
+								.json({ Updated: doc, message: 'Updated image and status' });
+						})
+						.catch((err) => debug(`error : ${chalk.red(err)}`));
 				})
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
-			mediaModel
-				.updateOne({ _id: id }, { active: show })
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Only status updated' });
-				})
+			const data = {
+				active: show,
+				name: name,
+			};
+			MediaModel.updateOne({ _id: id }, data)
+				.then(() => res.redirect('/media'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		}
 	},
 
 	deleteMedia: (req, res) => {
 		const { id } = req.params;
-		mediaModel
-			.findById(id)
+		MediaModel.findById(id)
 			.then((doc) => {
-				let path = `./public/${doc.media}`;
+				let path = `./public${doc.mediaPath}`;
 				fs.stat(path, (err) => {
 					fs.unlink(path, (err) => {
 						if (err) {
@@ -129,13 +122,8 @@ module.exports = {
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 
-		mediaModel
-			.deleteOne({ _id: id })
-			.then((doc) => {
-				res
-					.status(200)
-					.json({ Deleted: doc, message: 'File deleted succesfully' });
-			})
+		MediaModel.deleteOne({ _id: id })
+			.then(() => res.redirect('/media'))
 			.catch((err) => {});
 	},
 };

@@ -12,13 +12,14 @@ module.exports = {
 	getAllBanners: (req, res) => {
 		BannerModel.find()
 			.then((banner) => {
-				res.status(200).json({ Banners: banner });
+				res.render('banner/bannerView', { banners: banner, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
+
 	uploadBanner: (req, res) => {
 		let filename = '';
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
@@ -31,34 +32,34 @@ module.exports = {
 			});
 
 			new BannerModel({
-				name: filename,
-				banner: `uploads/banners/${filename}`,
+				name: name,
+				bannerPath: `/uploads/banners/${filename}`,
 				active: show,
 			})
 				.save()
-				.then((banner) => {
-					res.json({ Banner: banner, message: 'File Uploaded' });
-				})
+				.then(() => res.redirect('/banner'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		}
 	},
+
 	getBannerById: (req, res) => {
 		const { id } = req.params;
 		BannerModel.findById(id)
 			.then((banner) => {
-				res.status(200).json({ Banner: banner });
+				res.render('banner/editBanner', { banner: banner, user: req.user });
 			})
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
+
 	updateBanner: (req, res) => {
 		const { id } = req.params;
-		const { active } = req.body;
+		const { name, active } = req.body;
 		const show = active ? true : false;
 
 		if (!isEmpty(req.files)) {
 			BannerModel.findById(id)
 				.then((doc) => {
-					let path = `./public/${doc.banner}`;
+					let path = `./public${doc.banner}`;
 					fs.stat(path, (err) => {
 						fs.unlink(path, (err) => {
 							if (err) {
@@ -68,36 +69,33 @@ module.exports = {
 						});
 					});
 				})
-				.catch((err) => debug(`error : ${chalk.red(err)}`));
+				.then(() => {
+					let file = req.files.uploadedFile;
+					let filename = file.name;
+					let uploadDir = './public/uploads/banners/';
 
-			let file = req.files.uploadedFile;
-			let filename = file.name;
-			let uploadDir = './public/uploads/banners/';
+					file.mv(uploadDir + filename, (err) => {
+						if (err) throw err;
+					});
 
-			file.mv(uploadDir + filename, (err) => {
-				if (err) throw err;
-			});
+					const data = {
+						name: name,
+						bannerPath: `/uploads/banners/${filename}`,
+						active: show,
+					};
 
-			const data = {
-				name: filename,
-				banner: `uploads/banners/${filename}`,
-				active: show,
-			};
-
-			BannerModel.updateOne({ _id: id }, data)
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Updated image and status' });
+					BannerModel.updateOne({ _id: id }, data)
+						.then(() => res.redirect('/banner'))
+						.catch((err) => debug(`error : ${chalk.red(err)}`));
 				})
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		} else {
-			BannerModel.updateOne({ _id: id }, { active: show })
-				.then((doc) => {
-					res
-						.status(200)
-						.json({ Updated: doc, message: 'Only status updated' });
-				})
+			const data = {
+				active: show,
+				name: name,
+			};
+			BannerModel.updateOne({ _id: id }, data)
+				.then(() => res.redirect('/banner'))
 				.catch((err) => debug(`error : ${chalk.red(err)}`));
 		}
 	},
@@ -105,7 +103,7 @@ module.exports = {
 		const { id } = req.params;
 		BannerModel.findById(id)
 			.then((doc) => {
-				let path = `./public/${doc.banner}`;
+				let path = `./public${doc.banner}`;
 				fs.stat(path, (err) => {
 					fs.unlink(path, (err) => {
 						if (err) {
@@ -118,11 +116,7 @@ module.exports = {
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 
 		BannerModel.deleteOne({ _id: id })
-			.then((doc) => {
-				res
-					.status(200)
-					.json({ Deleted: doc, message: 'File deleted succesfully' });
-			})
+			.then((doc) => res.redirect('/banner'))
 			.catch((err) => debug(`error : ${chalk.red(err)}`));
 	},
 };
