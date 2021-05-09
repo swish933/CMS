@@ -40,8 +40,8 @@ app.use(
 	session({
 		// secret for session
 		secret: 'secretKey',
-		saveUninitialized: true,
-		resave: true,
+		saveUninitialized: false,
+		resave: false,
 		//store session on MongoDB using express-session + connect-mongo
 		store: new MongoStore({
 			url: DB_URL,
