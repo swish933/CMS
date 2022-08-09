@@ -1,6 +1,5 @@
 const Validator = require('validator');
 const isEmpty = require('is-empty');
-const { default: validator } = require('validator');
 const e = require('express');
 
 const validateRegisterInput = (data) => {
@@ -36,7 +35,7 @@ const validateRegisterInput = (data) => {
 		errors.password = 'Password must be at least 6 characters';
 	}
 
-	if (!Validator.equals(password, password2)) {
+	if (Validator.notStrictEqual(password, password2)) {
 		errors.password2 = 'Passwords must match';
 	}
 

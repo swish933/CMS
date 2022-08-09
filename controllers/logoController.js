@@ -27,6 +27,10 @@ module.exports = {
 			filename = file.name;
 			let uploadDir = './public/uploads/logos/';
 
+			if (!fs.existsSync(uploadDir)) {
+				fs.mkdirSync(uploadDir);
+			}
+
 			file.mv(uploadDir + filename, (err) => {
 				if (err) throw err;
 			});
