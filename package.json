@@ -17,7 +17,7 @@
     "connect-mongo": "^3.2.0",
     "dotenv": "^8.6.0",
     "ejs": "^3.1.7",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "express-ejs-layouts": "^2.5.0",
     "express-fileupload": "^1.2.1",
     "express-session": "^1.17.2",
